@@ -1,25 +1,33 @@
-# ShortcutsMacros
+ShortcutsMacros
 
-Swift Macros for reducing App Intents boilerplate in Shortcuts Powerhouse.
+Swift macros to reduce App Intents boilerplate
 
-## Overview
+This package exists to eliminate repetitive AppIntent code by generating common metadata and patterns at compile time.
 
-ShortcutsMacros provides compile-time code generation for App Intents, automatically generating:
-- Static metadata (title, description, category)
-- Parameter summaries
-- Training mode guards
-- Logging integration
-- Entity and Query conformances
-- Snippet intent support
+It focuses on:
+	•	Reducing copy-paste
+	•	Enforcing consistent intent structure
+	•	Preserving safety and logging conventions
+	•	Keeping custom logic explicit
 
-## Features
+⸻
 
-### @SimpleIntent
-Generates AppIntent boilerplate for basic CRUD operations.
+What it generates
 
-**Expected code reduction**: 43-60%
+From a small annotated struct, the macro generates:
+	•	Static metadata (title, description, category, keywords)
+	•	Parameter summaries
+	•	Training mode guards
+	•	Logging hooks
+	•	Entity + Query conformances (planned)
+	•	SnippetIntent scaffolding (planned)
 
-```swift
+⸻
+
+Example
+
+Input
+
 @SimpleIntent(
     title: "Delete from Data Hub",
     description: "Delete a value",
@@ -36,95 +44,101 @@ struct DeleteValueAction {
         // custom logic
     }
 }
-```
 
-Generates:
-- `DeleteValueIntent` AppIntent struct
-- Static metadata properties
-- Parameter summary
-- Wrapped perform() with training guard and logging
+Generated
+	•	DeleteValueIntent : AppIntent
+	•	Static metadata
+	•	ParameterSummary
+	•	Training mode guard
+	•	Logging wrapper around perform()
 
-### @EntityIntent (Coming Week 2)
-Generates AppEntity + EntityQuery boilerplate.
+Your logic stays in perform().
+Everything else is generated.
 
-**Expected code reduction**: 67%
+⸻
 
-### @SnippetIntent (Coming Week 2)
-Generates SnippetIntent boilerplate.
+Design goals
 
-**Expected code reduction**: 60%
+These macros do not change behavior. They only standardize structure.
 
-### @IntentParameter
-Marks parameters with metadata for code generation.
+They preserve:
+	•	AppIntentsGuards.isTraining()
+	•	IntentLogger usage
+	•	UserFacingSanitizer
+	•	@MainActor isolation
+	•	Existing service patterns
 
-### @ConfirmationFlow (Coming Week 3)
-Standardizes confirmation patterns.
+This package is intentionally conservative.
+No magic. No runtime reflection. No DSLs.
 
-### @AutoSummary (Coming Week 3)
-Auto-generates ParameterSummary from template.
+⸻
 
-## Architecture Preserved
+Roadmap
 
-All macros preserve critical patterns:
-- ✅ Training mode guards (`AppIntentsGuards.isTraining()`)
-- ✅ Logging (`IntentLogger` calls)
-- ✅ Path sanitization (`UserFacingSanitizer`)
-- ✅ MainActor isolation on perform()
-- ✅ Singleton service access patterns
+Phase 1
+	•	Package setup
+	•	@SimpleIntent
+	•	Proof of concept conversion (DaleteValueIntent)
 
-## Implementation Timeline
+Phase 2
+	•	@EntityIntent
+	•	@SnippetIntent
+	•	Convert MemorySTORE intents
 
-**Phase 1 (Week 1)**:
-- ✅ Package setup
-- ✅ @SimpleIntent macro
-- [ ] Convert DeleteValueIntent (proof of concept)
+Phase 3
+	•	@ConfirmationFlow
+	•	@AutoSummary
+	•	Entity + snippet support
 
-**Phase 2 (Week 2)**:
-- @EntityIntent macro
-- @SnippetIntent macro
-- Convert 5 MemorySTORE intents
+Phase 4
+	•	Tests
+	•	Documentation
+	•	Wider adoption in project
 
-**Phase 3 (Week 3)**:
-- @ConfirmationFlow macro
-- @AutoSummary macro
-- Convert entities and snippets
+⸻
 
-**Phase 4 (Week 4)**:
-- Comprehensive testing
-- Documentation
-- Final conversions
+Testing
 
-## Testing
+Uses Swift Testing with:
+	•	Macro expansion tests
+	•	Compile tests
+	•	Runtime tests
+	•	Training mode safety tests
 
-Uses Swift Testing framework with:
-- Unit tests for macro expansion
-- Compile tests
-- Runtime tests
-- Training mode safety tests
+Run:
 
-Run tests:
-```bash
 swift test
-```
 
-## Usage
 
-Import in your intent files:
-```swift
+⸻
+
+Usage
+
+Add the package and import it:
+
 import ShortcutsMacros
-```
 
-Then annotate your action structs with `@SimpleIntent`.
+Annotate your action struct:
 
-## Known Limitations
+@SimpleIntent(...)
+struct MyAction { ... }
 
-- Currently only supports struct declarations
-- Complex logic should remain in custom `perform()` methods
-- Parameter summaries are auto-generated (can be overridden if needed)
 
-## Future Enhancements
+⸻
 
-- Custom summary templates
-- Validation macros
-- Error handling patterns
-- Snippet view generation
+Known limitations
+	•	Only supports struct declarations
+	•	Complex logic must remain in perform()
+	•	Parameter summaries are auto-generated (can be overridden later)
+	•	Xcode macro plugin resolution is still unreliable in some setups
+
+⸻
+
+Future ideas
+	•	Custom summary templates
+	•	Validation macros
+	•	Error handling patterns
+	•	Snippet view generation
+
+
+
